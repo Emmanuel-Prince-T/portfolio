@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emmanuel Prince TAHE | Développeur Full Stack</title>
+    <link rel="icon" href="data:,">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #0062ff;
+            --secondary-color: #80b0ff;
+            --accent-color: #ff7b00;
+            --text-color: #333;
+            --light-bg: rgba(255, 255, 255, 0.7);
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #e4e8f0);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+        
+        .wave-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 200px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%230062ff" fill-opacity="0.2" d="M0,128L48,144C96,160,192,192,288,192C384,192,480,160,576,154.7C672,149,768,171,864,165.3C960,160,1056,128,1152,117.3C1248,107,1344,117,1392,122.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-size: cover;
+            z-index: -1;
+        }
+        
+        /* Glassmorphism */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Navbar */
+        .navbar {
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-scrolled {
+            padding: 0.5rem 2rem;
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link {
+            color: var(--text-color);
+            font-weight: 500;
+            margin: 0 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-color);
+            background-color: rgba(0, 98, 255, 0.1);
+        }
+        
+        /* Hero Section */
+        #home {
+            min-height: 100vh;
+            padding-top: 6rem;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+        
+        .hand-wave {
+            display: none; /* Sera affiché après l'animation de frappe */
+            animation: wave 2.5s infinite;
+            transform-origin: 70% 70%;
+        }
+        
+        @keyframes wave {
+            0% { transform: rotate(0deg); }
+            10% { transform: rotate(14deg); }
+            20% { transform: rotate(-8deg); }
+            30% { transform: rotate(14deg); }
+            40% { transform: rotate(-4deg); }
+            50% { transform: rotate(10deg); }
+            60% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #666;
+        }
+        
+        .highlight {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 98, 255, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background-color: #0052d6;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 98, 255, 0.4);
+        }
+        
+        .cube-wrapper {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Effet Parallaxe */
+        .parallax-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            will-change: transform;
+        }
+        
+        .parallax-background {
+            background: linear-gradient(135deg, #e4e8f0, #c9d4e8);
+            transform: translateZ(-2px) scale(3);
+            z-index: -2;
+        }
+        
+        .parallax-foreground {
+            transform: translateZ(1px) scale(0.9);
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* Section Common Styles */
+        section {
+            padding: 5rem 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            text-align: center;
+            color: var(--text-color);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            margin: 1rem auto 0;
+            border-radius: 3px;
+        }
+        
+        .card-glass {
+            padding: 2rem;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .card-glass:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+        }
+        
+        /* Formation Section */
+        #formations .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        #formations .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .timeline-item {
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            box-shadow: 0 0 0 5px rgba(0, 98, 255, 0.2);
+        }
+        
+        .timeline-date {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+        
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .timeline-place {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Certifications Section */
+        .cert-badge {
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .cert-badge:hover {
+            transform: scale(1.05);
+        }
+        
+        .cert-badge img {
+            max-width: 100px;
+            height: auto;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Projets Section */
+        .project-card {
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .project-img {
+            height: 200px;
+            background-color: #ddd;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .project-content {
+            padding: 1.5rem;
+            background: white;
+        }
+        
+        .project-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        
+        .project-tag {
+            padding: 0.4rem 0.8rem;
+            background: rgba(0, 98, 255, 0.1);
+            color: var(--primary-color);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Passions Section */
+        .passion-item {
+            text-align: center;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .passion-item:hover {
+            transform: translateY(-10px);
+        }
+        
+        .passion-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Contact Section */
+        #contact {
+            background: linear-gradient(135deg, #f8faff, #e4e8f0);
+        }
+        
+        .contact-info {
+            margin-bottom: 2rem;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .contact-text {
+            font-size: 1.1rem;
+        }
+        
+        .form-control {
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(0, 98, 255, 0.25);
+        }
+        
+        .form-glass {
+            padding: 2rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+        
+        .social-links {
+            margin-bottom: 1.5rem;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 50%;
+            margin: 0 0.5rem;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .social-link:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: 0 4px 15px rgba(0, 98, 255, 0.3);
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        
+        .back-to-top:hover {
+            background: #0052d6;
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 98, 255, 0.4);
+        }
+        
+        /* Responsive */
+        @media (max-width: 991.98px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.3rem;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 767.98px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .cube-wrapper {
+                width: 150px;
+                height: 150px;
+                margin-top: 2rem;
+            }
+        }
+        
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Canvas pour les particules (sera ajouté par JavaScript) -->
+    
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#home">Emmanuel TAHE</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#formations">Formations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#certifications">Certifications</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#projets">Réalisations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#passions">Passions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section avec effet Parallaxe -->
+    <section id="home">
+        <div class="parallax-layer parallax-background"></div>
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-7 hero-content fade-in">
+                    <h1 class="hero-title">Hey, I'm Emmanuel <span class="hand-wave">👋</span></h1>
+                    <p class="hero-subtitle">Je suis <span class="highlight">Développeur Full Stack JavaScript</span> passionné par le code et l'apprentissage de nouvelles technologies!</p>
+                    <a href="#projets" class="btn btn-primary">Découvrir mes projets</a>
+                </div>
+                <div class="col-lg-5 fade-in">
+                    <div class="cube-wrapper"></div> <!-- Cube Three.js sera injecté ici -->
+                </div>
+            </div>
+        </div>
+        <div class="parallax-layer parallax-foreground"></div>
+        <div class="wave-bg"></div>
+    </section>
+
+    <!-- Formations Section -->
+    <section id="formations">
+        <div class="container">
+            <h2 class="section-title fade-in">Mes Formations</h2>
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="glass card-glass fade-in">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-date">2024 - 2025</div>
+                                <h4 class="timeline-title">Bachelor 2 | Systeme d' Information </h4>
+                                <div class="timeline-place">Lomé Business School</div>
+                                <p>Formation en développement full stack, avec spécialisation en JavaScript et technologies web modernes.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">2023 - 2024</div>
+                                <h4 class="timeline-title">Bachelor 1 | Systeme d' Information</h4>
+                                <div class="timeline-place">Lomé Business School</div>
+                                <p>Formation axée sur le développement d'applications et la gestion de projets informatiques.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">2022 - 2023</div>
+                                <h4 class="timeline-title">Baccalauréat Série C4</h4>
+                                <div class="timeline-place">Le SAVOIR, Lomé</div>
+                                <p>Développement de mon amour pour les sciences [Mahs, Physiques]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certifications Section -->
+    <section id="certifications">
+        <div class="container">
+            <h2 class="section-title fade-in">Mes Certifications</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="glass card-glass cert-badge fade-in">
+                        <i class="fab fa-react fa-4x mb-4" style="color: #61DAFB;"></i>
+                        <h4>React Certified Developer</h4>
+                        <p>OpenClassroom • 2024</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="glass card-glass cert-badge fade-in">
+                        <i class="fab fa-node-js fa-4x mb-4" style="color: #68A063;"></i>
+                        <h4>Node.js Professional</h4>
+                        <p>OpenClassroom• 2025</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="glass card-glass cert-badge fade-in">
+                        <i class="fab fa-aws fa-4x mb-4" style="color: #FF9900;"></i>
+                        <h4>AWS Certified Developer</h4>
+                        <p>Amazon • En cour</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projets Section -->
+    <section id="projets">
+        <div class="container">
+            <h2 class="section-title fade-in">Mes Réalisations</h2>
+            <div class="row">
+                <div class="col-lg-4 col-md-6">
+                    <div class="project-card fade-in">
+                        <div class="project-img" style="background-color: #6C63FF;"></div>
+                        <div class="project-content">
+                            <h4 class="project-title">E-commerce Platform</h4>
+                            <p>Plateforme e-commerce complète avec un systeme de localisation des livreurs</p>
+                            <div class="project-tags">
+                                <span class="project-tag">React</span>
+                                <span class="project-tag">TailwindCSS</span>
+                                <span class="project-tag">SIG</span>
+                                <span class="project-tag">AGI</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="project-card fade-in">
+                        <div class="project-img" style="background-color: #43A047;"></div>
+                        <div class="project-content">
+                            <h4 class="project-title">T-power App</h4>
+                            <p>Application de gestion d'un système [composé du panneau solaire, de la batterie, du courant électrique et des capteurs] avec fonctionnalités collaboratives et notifications en temps réel.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">Html</span>
+                                <span class="project-tag">Bootstrap</span>
+                                <span class="project-tag">PHP</span>
+                                <span class="project-tag">Firebase</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="project-card fade-in">
+                        <div class="project-img" style="background-color: #FF6584;"></div>
+                        <div class="project-content">
+                            <h4 class="project-title">Christmax</h4>
+                            <p>Une application web pour souhaiter un joyeux noel à tout le monde.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">Html</span>
+                                <span class="project-tag">Bootstrap</span>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Passions Section -->
+    <section id="passions">
+        <div class="container">
+            <h2 class="section-title fade-in">Mes Passions</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="glass card-glass passion-item fade-in">
+                        <i class="fas fa-laptop-code passion-icon"></i>
+                        <h4>Open Source</h4>
+                        <p>Contributeur actif à plusieurs projets open source et passionné par le partage de connaissances.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="glass card-glass passion-item fade-in">
+                        <i class="fas fa-mountain passion-icon"></i>
+                        <h4>Randonnée</h4>
+                        <p>Amateur de randonnées en montagne et d'exploration de nouveaux paysages naturels.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="glass card-glass passion-item fade-in">
+                        <i class="fas fa-chess passion-icon"></i>
+                        <h4>Échecs</h4>
+                        <p>Joueur d'échecs enthousiaste, participant à des tournois locaux.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <h2 class="section-title fade-in">Contactez-moi</h2>
+            <div class="row">
+                <div class="col-lg-5">
+                    <div class="glass card-glass contact-info fade-in">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-text">
+                                emmanueltahe25@gmail.com
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="contact-text">
+                                +228 99 35 99 70
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="contact-text">
+                                Lomé, Togo
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="glass card-glass form-glass fade-in">
+                        <form id="contact-form">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <input type="text" class="form-control" placeholder="Votre nom" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <input type="email" class="form-control" placeholder="Votre email" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" placeholder="Sujet" required>
+                            </div>
+                            <div class="mb-3">
+                                <textarea class="form-control" rows="5" placeholder="Votre message" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Envoyer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="https://github.com/Emmanuel-Prince-T" class="social-link"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/emmanuel-tahe/" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <p>&copy; 2025 Emma-Tech. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <div class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Navbar scroll effect
+                const navbar = document.querySelector('.navbar');
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('navbar-scrolled');
+                    } else {
+                        navbar.classList.remove('navbar-scrolled');
+                    }
+                });
+                
+                // Back to top button
+                const backToTop = document.querySelector('.back-to-top');
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 300) {
+                        backToTop.classList.add('visible');
+                    } else {
+                        backToTop.classList.remove('visible');
+                    }
+                });
+                
+                backToTop.addEventListener('click', function() {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+                
+                // Smooth scrolling for navigation links
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        const targetId = this.getAttribute('href');
+                        if (!targetId) return;
+                        
+                        const targetElement = document.querySelector(targetId);
+                        if (!targetElement) return;
+                        
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Active link handling
+                        document.querySelectorAll('.nav-link').forEach(link => {
+                            link.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                    });
+                });
+                
+                // Scroll reveal animation
+                const revealElements = document.querySelectorAll('.fade-in');
+                
+                function checkReveal() {
+                    const triggerBottom = window.innerHeight * 0.8;
+                    
+                    revealElements.forEach(element => {
+                        const elementTop = element.getBoundingClientRect().top;
+                        
+                        if (elementTop < triggerBottom) {
+                            element.classList.add('visible');
+                        }
+                    });
+                }
+                
+                // Optimized scroll event with debounce
+                let isScrolling;
+                window.addEventListener('scroll', function() {
+                    window.clearTimeout(isScrolling);
+                    isScrolling = setTimeout(checkReveal, 50);
+                }, { passive: true });
+                
+                checkReveal(); // Initial check
+                
+                // Section navigation highlight
+                const sections = document.querySelectorAll('section');
+                const navLinks = document.querySelectorAll('.nav-link');
+                
+                window.addEventListener('scroll', function() {
+                    let current = '';
+                    
+                    sections.forEach(section => {
+                        const sectionTop = section.offsetTop;
+                        const sectionHeight = section.clientHeight;
+                        
+                        if (window.scrollY >= sectionTop - 100) {
+                            current = section.getAttribute('id');
+                        }
+                    });
+                    
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${current}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                });
+                
+                // Contact form submission
+                const contactForm = document.getElementById('contact-form');
+                if (contactForm) {
+                    contactForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        
+                        // Show success message immediately
+                        this.innerHTML = `
+                            <div class="alert alert-success" role="alert">
+                                <h4 class="alert-heading">Message envoyé!</h4>
+                                <p>Merci pour votre message. Mais pour que je réponde vite, écrivez-moi sur Whatsapp.</p>
+                            </div>
+                        `;
+                        
+                        return false;
+                    });
+                }
+                
+                // Initialize all animations
+                initAnimations();
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+            }
+        });
+        
+        // Three.js Animation
+        function initThreeAnimation() {
+            const container = document.querySelector('.cube-wrapper');
+            if (!container) return;
+
+            // Configuration de la scène
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(200, 200);
+            container.appendChild(renderer.domElement);
+
+            // Création du cube
+            const geometry = new THREE.BoxGeometry(3, 3, 3);
+            const material = new THREE.MeshPhongMaterial({ 
+                color: 0x0062ff,
+                transparent: true,
+                opacity: 0.9,
+                shininess: 100
+            });
+            const cube = new THREE.Mesh(geometry, material);
+            scene.add(cube);
+
+            // Ajout de lumières
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+
+            camera.position.z = 5;
+
+            // Animation
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                cube.rotation.x += 0.005;
+                cube.rotation.y += 0.01;
+                
+                renderer.render(scene, camera);
+            }
+
+            // Interaction souris
+            let mouseX = 0, mouseY = 0;
+            window.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+                cube.rotation.y = mouseX * 0.5;
+                cube.rotation.x = mouseY * 0.5;
+            });
+
+            function onWindowResize() {
+                camera.aspect = 1;
+                camera.updateProjectionMatrix();
+                renderer.setSize(200, 200);
+            }
+            window.addEventListener('resize', onWindowResize);
+
+            animate();
+        }
+
+        // Effet Parallaxe
+        function initParallax() {
+            if (window.innerWidth > 768) { // Seulement sur desktop
+                document.querySelectorAll('.parallax-layer').forEach(layer => {
+                    window.addEventListener('mousemove', (e) => {
+                        const x = (e.clientX / window.innerWidth) * 20 - 10;
+                        const y = (e.clientY / window.innerHeight) * 20 - 10;
+                        layer.style.transform = `translate(${x}px, ${y}px)`;
+                    });
+                });
+            }
+        }
+
+        // Animation de texte
+        function animateTypingText() {
+            const heroTitle = document.querySelector('.hero-title');
+            if (!heroTitle) return;
+
+            const text = heroTitle.textContent;
+            heroTitle.textContent = '';
+            
+            let i = 0;
+            const typingInterval = setInterval(() => {
+                if (i < text.length) {
+                    heroTitle.textContent += text.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(typingInterval);
+                    // Ajoutez la main qui wave après que le texte soit complet
+                    document.querySelector('.hand-wave').style.display = 'inline-block';
+                }
+            }, 100);
+        }
+
+        // Effet de particules
+        function initParticles() {
+            const canvas = document.createElement('canvas');
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.zIndex = '-1';
+            canvas.style.opacity = '0.3';
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const particleCount = window.innerWidth * 0.1;
+
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2 + 1,
+                    speedX: Math.random() * 0.5 - 0.25,
+                    speedY: Math.random() * 0.5 - 0.25
+                });
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    
+                    ctx.fillStyle = '#0062ff';
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    
+                    if (p.x > canvas.width || p.x < 0) p.speedX *= -1;
+                    if (p.y > canvas.height || p.y < 0) p.speedY *= -1;
+                }
+                
+                requestAnimationFrame(animateParticles);
+            }
+
+            animateParticles();
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        // Initialisation de toutes les animations
+        function initAnimations() {
+            console.log('Initializing animations...');
+            initThreeAnimation();
+            initParallax();
+            animateTypingText();
+            initParticles();
+        }
+    </script>
+</body>
+</html>
