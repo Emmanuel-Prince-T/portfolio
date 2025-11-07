@@ -867,17 +867,17 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <input type="text" class="form-control" id="name" placeholder="Votre nom" required>
+                                    <input type="text" class="form-control" id="name" name="from_name" placeholder="Votre nom" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <input type="email" class="form-control" id="email" placeholder="Votre email" required>
+                                    <input type="email" class="form-control" id="email" name="from_email" placeholder="Votre email" required>
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <input type="text" class="form-control" id="subject" placeholder="Sujet" required>
+                                <input type="text" class="form-control" id="subject" name="subject" placeholder="Sujet" required>
                             </div>
                             <div class="mb-3">
-                                <textarea class="form-control" id="message" rows="5" placeholder="Votre message" required></textarea>
+                                <textarea class="form-control" id="message" name="message" rows="5" placeholder="Votre message" required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary" id="submitBtn">
                                 <span id="submitText">Envoyer</span>
@@ -910,9 +910,14 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- EmailJS Integration -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             try {
+                // Initialize EmailJS avec vos identifiants
+                emailjs.init('B-QUy9aHbYsTLsrim');
+                
                 // Theme toggle
                 const themeToggle = document.getElementById('themeToggle');
                 const themeIcon = themeToggle.querySelector('i');
@@ -1059,27 +1064,9 @@
                         submitSpinner.style.display = 'inline-block';
                         submitBtn.disabled = true;
                         
-                        // Get form data
-                        const formData = {
-                            name: document.getElementById('name').value,
-                            email: document.getElementById('email').value,
-                            subject: document.getElementById('subject').value,
-                            message: document.getElementById('message').value
-                        };
-                        
                         try {
-                            
-                            const serviceID = 'service_7xcsn1f';
-                            const templateID = 'template_f3k5nf7';
-                            const userID = 'B-QUy9aHbYsTLsrim';
-                            
-                            // Send email using EmailJS
-                            await emailjs.send(serviceID, templateID, {
-                                from_name: formData.name,
-                                from_email: formData.email,
-                                subject: formData.subject,
-                                message: formData.message
-                            }, userID);
+                            // Send email using EmailJS avec vos identifiants
+                            await emailjs.sendForm('service_7xcsn1f', 'template_f3k5nf7', this);
                             
                             // Show success message
                             successAlert.style.display = 'block';
@@ -1254,14 +1241,6 @@
             animateTypingText();
             initParticles();
         }
-    </script>
-    <!-- EmailJS Integration -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script type="text/javascript">
-        
-        (function() {
-            emailjs.init("B-QUy9aHbYsTLsrim"); 
-        })();
     </script>
 </body>
 </html>
