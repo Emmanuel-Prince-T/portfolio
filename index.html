@@ -17,6 +17,8 @@
             --light-bg: rgba(255, 255, 255, 0.7);
             --glass-bg: rgba(255, 255, 255, 0.15);
             --glass-border: rgba(255, 255, 255, 0.2);
+            --dark-bg: #121212;
+            --card-bg: #1e1e1e;
         }
         
         * {
@@ -27,9 +29,15 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--dark-bg);
+            color: #fff;
+            overflow-x: hidden;
+            transition: background 0.3s ease;
+        }
+        
+        body.light-mode {
             background: linear-gradient(135deg, #f5f7fa, #e4e8f0);
             color: var(--text-color);
-            overflow-x: hidden;
         }
         
         .wave-bg {
@@ -45,18 +53,23 @@
         
         /* Glassmorphism */
         .glass {
-            background: var(--glass-bg);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .light-mode .glass {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
         }
         
         /* Navbar */
         .navbar {
             padding: 1rem 2rem;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(18, 18, 18, 0.8);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -67,8 +80,16 @@
             transition: all 0.3s ease;
         }
         
+        .light-mode .navbar {
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
         .navbar-scrolled {
             padding: 0.5rem 2rem;
+            background: rgba(18, 18, 18, 0.95);
+        }
+        
+        .light-mode .navbar-scrolled {
             background: rgba(255, 255, 255, 0.95);
         }
         
@@ -80,7 +101,7 @@
         }
         
         .nav-link {
-            color: var(--text-color);
+            color: #fff;
             font-weight: 500;
             margin: 0 0.5rem;
             padding: 0.5rem 1rem;
@@ -88,9 +109,27 @@
             transition: all 0.3s ease;
         }
         
+        .light-mode .nav-link {
+            color: var(--text-color);
+        }
+        
         .nav-link:hover, .nav-link.active {
             color: var(--primary-color);
             background-color: rgba(0, 98, 255, 0.1);
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .theme-toggle {
+            color: var(--text-color);
         }
         
         /* Hero Section */
@@ -113,6 +152,10 @@
             font-size: 3.5rem;
             font-weight: 700;
             margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .light-mode .hero-title {
             color: var(--text-color);
         }
         
@@ -136,6 +179,10 @@
         .hero-subtitle {
             font-size: 1.5rem;
             margin-bottom: 2rem;
+            color: #aaa;
+        }
+        
+        .light-mode .hero-subtitle {
             color: #666;
         }
         
@@ -168,26 +215,6 @@
             z-index: 2;
         }
         
-        /* Effet Parallaxe */
-        .parallax-layer {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            will-change: transform;
-        }
-        
-        .parallax-background {
-            background: linear-gradient(135deg, #e4e8f0, #c9d4e8);
-            transform: translateZ(-2px) scale(3);
-            z-index: -2;
-        }
-        
-        .parallax-foreground {
-            transform: translateZ(1px) scale(0.9);
-            z-index: 1;
-            pointer-events: none;
-        }
-        
         /* Section Common Styles */
         section {
             padding: 5rem 0;
@@ -202,8 +229,12 @@
             font-weight: 700;
             margin-bottom: 3rem;
             text-align: center;
-            color: var(--text-color);
+            color: #fff;
             position: relative;
+        }
+        
+        .light-mode .section-title {
+            color: var(--text-color);
         }
         
         .section-title::after {
@@ -220,6 +251,13 @@
             padding: 2rem;
             height: 100%;
             transition: all 0.3s ease;
+            background: var(--card-bg);
+            color: #fff;
+        }
+        
+        .light-mode .card-glass {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-color);
         }
         
         .card-glass:hover {
@@ -236,6 +274,10 @@
         .card-title {
             font-weight: 600;
             margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .light-mode .card-title {
             color: var(--text-color);
         }
         
@@ -275,19 +317,32 @@
         
         .timeline-date {
             font-size: 0.9rem;
-            color: #888;
+            color: #aaa;
             margin-bottom: 0.5rem;
+        }
+        
+        .light-mode .timeline-date {
+            color: #888;
         }
         
         .timeline-title {
             font-weight: 600;
             margin-bottom: 0.5rem;
+            color: #fff;
+        }
+        
+        .light-mode .timeline-title {
+            color: var(--text-color);
         }
         
         .timeline-place {
             font-style: italic;
-            color: #666;
+            color: #aaa;
             margin-bottom: 0.5rem;
+        }
+        
+        .light-mode .timeline-place {
+            color: #666;
         }
         
         /* Certifications Section */
@@ -314,6 +369,11 @@
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
+            background: var(--card-bg);
+        }
+        
+        .light-mode .project-card {
+            background: white;
         }
         
         .project-card:hover {
@@ -323,14 +383,24 @@
         
         .project-img {
             height: 200px;
-            background-color: #ddd;
+            background-color: #333;
             background-size: cover;
             background-position: center;
         }
         
+        .light-mode .project-img {
+            background-color: #ddd;
+        }
+        
         .project-content {
             padding: 1.5rem;
+            background: var(--card-bg);
+            color: #fff;
+        }
+        
+        .light-mode .project-content {
             background: white;
+            color: var(--text-color);
         }
         
         .project-title {
@@ -373,6 +443,10 @@
         
         /* Contact Section */
         #contact {
+            background: linear-gradient(135deg, #1a1a1a, #121212);
+        }
+        
+        .light-mode #contact {
             background: linear-gradient(135deg, #f8faff, #e4e8f0);
         }
         
@@ -406,10 +480,17 @@
         
         .form-control {
             padding: 1rem;
-            border: 1px solid #ddd;
+            border: 1px solid #444;
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.1);
             margin-bottom: 1.5rem;
+            color: #fff;
+        }
+        
+        .light-mode .form-control {
+            border: 1px solid #ddd;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-color);
         }
         
         .form-control:focus {
@@ -528,6 +609,16 @@
             opacity: 1;
             transform: translateY(0);
         }
+        
+        /* Loading Spinner */
+        .spinner-border {
+            display: none;
+        }
+        
+        /* Alert Messages */
+        .alert {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -560,6 +651,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#contact">Contact</a>
                     </li>
+                    <li class="nav-item">
+                        <button class="theme-toggle nav-link" id="themeToggle">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -567,7 +663,6 @@
 
     <!-- Hero Section avec effet Parallaxe -->
     <section id="home">
-        <div class="parallax-layer parallax-background"></div>
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-7 hero-content fade-in">
@@ -580,7 +675,6 @@
                 </div>
             </div>
         </div>
-        <div class="parallax-layer parallax-foreground"></div>
         <div class="wave-bg"></div>
     </section>
 
@@ -594,13 +688,13 @@
                         <div class="timeline">
                             <div class="timeline-item">
                                 <div class="timeline-date">2024 - 2025</div>
-                                <h4 class="timeline-title">Bachelor 2 | Systeme d' Information </h4>
+                                <h4 class="timeline-title">Bachelor 2 | Système d'Information</h4>
                                 <div class="timeline-place">Lomé Business School</div>
                                 <p>Formation en développement full stack, avec spécialisation en JavaScript et technologies web modernes.</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-date">2023 - 2024</div>
-                                <h4 class="timeline-title">Bachelor 1 | Systeme d' Information</h4>
+                                <h4 class="timeline-title">Bachelor 1 | Système d'Information</h4>
                                 <div class="timeline-place">Lomé Business School</div>
                                 <p>Formation axée sur le développement d'applications et la gestion de projets informatiques.</p>
                             </div>
@@ -608,7 +702,7 @@
                                 <div class="timeline-date">2022 - 2023</div>
                                 <h4 class="timeline-title">Baccalauréat Série C4</h4>
                                 <div class="timeline-place">Le SAVOIR, Lomé</div>
-                                <p>Développement de mon amour pour les sciences [Mahs, Physiques]</p>
+                                <p>Développement de mon amour pour les sciences [Maths, Physiques]</p>
                             </div>
                         </div>
                     </div>
@@ -633,14 +727,14 @@
                     <div class="glass card-glass cert-badge fade-in">
                         <i class="fab fa-node-js fa-4x mb-4" style="color: #68A063;"></i>
                         <h4>Node.js Professional</h4>
-                        <p>OpenClassroom• 2025</p>
+                        <p>OpenClassroom • 2025</p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="glass card-glass cert-badge fade-in">
                         <i class="fab fa-aws fa-4x mb-4" style="color: #FF9900;"></i>
                         <h4>AWS Certified Developer</h4>
-                        <p>Amazon • En cour</p>
+                        <p>Amazon • En cours</p>
                     </div>
                 </div>
             </div>
@@ -657,7 +751,7 @@
                         <div class="project-img" style="background-color: #6C63FF;"></div>
                         <div class="project-content">
                             <h4 class="project-title">E-commerce Platform</h4>
-                            <p>Plateforme e-commerce complète avec un systeme de localisation des livreurs</p>
+                            <p>Plateforme e-commerce complète avec un système de localisation des livreurs</p>
                             <div class="project-tags">
                                 <span class="project-tag">React</span>
                                 <span class="project-tag">TailwindCSS</span>
@@ -674,7 +768,7 @@
                             <h4 class="project-title">T-power App</h4>
                             <p>Application de gestion d'un système [composé du panneau solaire, de la batterie, du courant électrique et des capteurs] avec fonctionnalités collaboratives et notifications en temps réel.</p>
                             <div class="project-tags">
-                                <span class="project-tag">Html</span>
+                                <span class="project-tag">HTML</span>
                                 <span class="project-tag">Bootstrap</span>
                                 <span class="project-tag">PHP</span>
                                 <span class="project-tag">Firebase</span>
@@ -687,11 +781,10 @@
                         <div class="project-img" style="background-color: #FF6584;"></div>
                         <div class="project-content">
                             <h4 class="project-title">Christmax</h4>
-                            <p>Une application web pour souhaiter un joyeux noel à tout le monde.</p>
+                            <p>Une application web pour souhaiter un joyeux noël à tout le monde.</p>
                             <div class="project-tags">
-                                <span class="project-tag">Html</span>
+                                <span class="project-tag">HTML</span>
                                 <span class="project-tag">Bootstrap</span>
-                                
                             </div>
                         </div>
                     </div>
@@ -766,21 +859,32 @@
                 <div class="col-lg-7">
                     <div class="glass card-glass form-glass fade-in">
                         <form id="contact-form">
+                            <div class="alert alert-success" role="alert" id="successAlert" style="display: none;">
+                                Message envoyé avec succès! Je vous répondrai dès que possible.
+                            </div>
+                            <div class="alert alert-danger" role="alert" id="errorAlert" style="display: none;">
+                                Une erreur s'est produite. Veuillez réessayer ou me contacter directement par email.
+                            </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <input type="text" class="form-control" placeholder="Votre nom" required>
+                                    <input type="text" class="form-control" id="name" placeholder="Votre nom" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <input type="email" class="form-control" placeholder="Votre email" required>
+                                    <input type="email" class="form-control" id="email" placeholder="Votre email" required>
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <input type="text" class="form-control" placeholder="Sujet" required>
+                                <input type="text" class="form-control" id="subject" placeholder="Sujet" required>
                             </div>
                             <div class="mb-3">
-                                <textarea class="form-control" rows="5" placeholder="Votre message" required></textarea>
+                                <textarea class="form-control" id="message" rows="5" placeholder="Votre message" required></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary">Envoyer</button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <span id="submitText">Envoyer</span>
+                                <div class="spinner-border spinner-border-sm ms-2" role="status" id="submitSpinner" style="display: none;">
+                                    <span class="visually-hidden">Chargement...</span>
+                                </div>
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -809,6 +913,32 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             try {
+                // Theme toggle
+                const themeToggle = document.getElementById('themeToggle');
+                const themeIcon = themeToggle.querySelector('i');
+                
+                // Check for saved theme preference or default to dark
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                if (savedTheme === 'light') {
+                    document.body.classList.add('light-mode');
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                }
+                
+                themeToggle.addEventListener('click', function() {
+                    document.body.classList.toggle('light-mode');
+                    
+                    if (document.body.classList.contains('light-mode')) {
+                        themeIcon.classList.remove('fa-moon');
+                        themeIcon.classList.add('fa-sun');
+                        localStorage.setItem('theme', 'light');
+                    } else {
+                        themeIcon.classList.remove('fa-sun');
+                        themeIcon.classList.add('fa-moon');
+                        localStorage.setItem('theme', 'dark');
+                    }
+                });
+                
                 // Navbar scroll effect
                 const navbar = document.querySelector('.navbar');
                 window.addEventListener('scroll', function() {
@@ -910,19 +1040,61 @@
                 
                 // Contact form submission
                 const contactForm = document.getElementById('contact-form');
+                const submitBtn = document.getElementById('submitBtn');
+                const submitText = document.getElementById('submitText');
+                const submitSpinner = document.getElementById('submitSpinner');
+                const successAlert = document.getElementById('successAlert');
+                const errorAlert = document.getElementById('errorAlert');
+                
                 if (contactForm) {
-                    contactForm.addEventListener('submit', function(e) {
+                    contactForm.addEventListener('submit', async function(e) {
                         e.preventDefault();
                         
-                        // Show success message immediately
-                        this.innerHTML = `
-                            <div class="alert alert-success" role="alert">
-                                <h4 class="alert-heading">Message envoyé!</h4>
-                                <p>Merci pour votre message. Mais pour que je réponde vite, écrivez-moi sur Whatsapp.</p>
-                            </div>
-                        `;
+                        // Hide previous alerts
+                        successAlert.style.display = 'none';
+                        errorAlert.style.display = 'none';
                         
-                        return false;
+                        // Show loading state
+                        submitText.textContent = 'Envoi en cours...';
+                        submitSpinner.style.display = 'inline-block';
+                        submitBtn.disabled = true;
+                        
+                        // Get form data
+                        const formData = {
+                            name: document.getElementById('name').value,
+                            email: document.getElementById('email').value,
+                            subject: document.getElementById('subject').value,
+                            message: document.getElementById('message').value
+                        };
+                        
+                        try {
+                            
+                            const serviceID = 'service_7xcsn1f';
+                            const templateID = 'template_f3k5nf7';
+                            const userID = 'B-QUy9aHbYsTLsrim';
+                            
+                            // Send email using EmailJS
+                            await emailjs.send(serviceID, templateID, {
+                                from_name: formData.name,
+                                from_email: formData.email,
+                                subject: formData.subject,
+                                message: formData.message
+                            }, userID);
+                            
+                            // Show success message
+                            successAlert.style.display = 'block';
+                            contactForm.reset();
+                            
+                        } catch (error) {
+                            console.error('Email sending error:', error);
+                            // Show error message
+                            errorAlert.style.display = 'block';
+                        } finally {
+                            // Reset button state
+                            submitText.textContent = 'Envoyer';
+                            submitSpinner.style.display = 'none';
+                            submitBtn.disabled = false;
+                        }
                     });
                 }
                 
@@ -994,19 +1166,6 @@
             window.addEventListener('resize', onWindowResize);
 
             animate();
-        }
-
-        // Effet Parallaxe
-        function initParallax() {
-            if (window.innerWidth > 768) { // Seulement sur desktop
-                document.querySelectorAll('.parallax-layer').forEach(layer => {
-                    window.addEventListener('mousemove', (e) => {
-                        const x = (e.clientX / window.innerWidth) * 20 - 10;
-                        const y = (e.clientY / window.innerHeight) * 20 - 10;
-                        layer.style.transform = `translate(${x}px, ${y}px)`;
-                    });
-                });
-            }
         }
 
         // Animation de texte
@@ -1092,10 +1251,17 @@
         function initAnimations() {
             console.log('Initializing animations...');
             initThreeAnimation();
-            initParallax();
             animateTypingText();
             initParticles();
         }
+    </script>
+    <!-- EmailJS Integration -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        
+        (function() {
+            emailjs.init("B-QUy9aHbYsTLsrim"); 
+        })();
     </script>
 </body>
 </html>
