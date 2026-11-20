@@ -1,1246 +1,789 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emmanuel Prince TAHE | Développeur Full Stack</title>
-    <link rel="icon" href="data:,">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <style>
-        :root {
-            --primary-color: #0062ff;
-            --secondary-color: #80b0ff;
-            --accent-color: #ff7b00;
-            --text-color: #333;
-            --light-bg: rgba(255, 255, 255, 0.7);
-            --glass-bg: rgba(255, 255, 255, 0.15);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --dark-bg: #121212;
-            --card-bg: #1e1e1e;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--dark-bg);
-            color: #fff;
-            overflow-x: hidden;
-            transition: background 0.3s ease;
-        }
-        
-        body.light-mode {
-            background: linear-gradient(135deg, #f5f7fa, #e4e8f0);
-            color: var(--text-color);
-        }
-        
-        .wave-bg {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 200px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%230062ff" fill-opacity="0.2" d="M0,128L48,144C96,160,192,192,288,192C384,192,480,160,576,154.7C672,149,768,171,864,165.3C960,160,1056,128,1152,117.3C1248,107,1344,117,1392,122.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
-            background-size: cover;
-            z-index: -1;
-        }
-        
-        /* Glassmorphism */
-        .glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-        
-        .light-mode .glass {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-        }
-        
-        /* Navbar */
-        .navbar {
-            padding: 1rem 2rem;
-            background: rgba(18, 18, 18, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-        
-        .light-mode .navbar {
-            background: rgba(255, 255, 255, 0.8);
-        }
-        
-        .navbar-scrolled {
-            padding: 0.5rem 2rem;
-            background: rgba(18, 18, 18, 0.95);
-        }
-        
-        .light-mode .navbar-scrolled {
-            background: rgba(255, 255, 255, 0.95);
-        }
-        
-        .navbar-brand {
-            font-weight: 700;
-            color: var(--primary-color);
-            font-size: 1.8rem;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-link {
-            color: #fff;
-            font-weight: 500;
-            margin: 0 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-        
-        .light-mode .nav-link {
-            color: var(--text-color);
-        }
-        
-        .nav-link:hover, .nav-link.active {
-            color: var(--primary-color);
-            background-color: rgba(0, 98, 255, 0.1);
-        }
-        
-        /* Theme Toggle */
-        .theme-toggle {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .light-mode .theme-toggle {
-            color: var(--text-color);
-        }
-        
-        /* Hero Section */
-        #home {
-            min-height: 100vh;
-            padding-top: 6rem;
-            display: flex;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero-content {
-            padding: 2rem;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #fff;
-        }
-        
-        .light-mode .hero-title {
-            color: var(--text-color);
-        }
-        
-        .hand-wave {
-            display: none; /* Sera affiché après l'animation de frappe */
-            animation: wave 2.5s infinite;
-            transform-origin: 70% 70%;
-        }
-        
-        @keyframes wave {
-            0% { transform: rotate(0deg); }
-            10% { transform: rotate(14deg); }
-            20% { transform: rotate(-8deg); }
-            30% { transform: rotate(14deg); }
-            40% { transform: rotate(-4deg); }
-            50% { transform: rotate(10deg); }
-            60% { transform: rotate(0deg); }
-            100% { transform: rotate(0deg); }
-        }
-        
-        .hero-subtitle {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            color: #aaa;
-        }
-        
-        .light-mode .hero-subtitle {
-            color: #666;
-        }
-        
-        .highlight {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 98, 255, 0.3);
-        }
-        
-        .btn-primary:hover {
-            background-color: #0052d6;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 98, 255, 0.4);
-        }
-        
-        .cube-wrapper {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 2;
-        }
-        
-        /* Section Common Styles */
-        section {
-            padding: 5rem 0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
-        
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 3rem;
-            text-align: center;
-            color: #fff;
-            position: relative;
-        }
-        
-        .light-mode .section-title {
-            color: var(--text-color);
-        }
-        
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 100px;
-            height: 3px;
-            background: var(--primary-color);
-            margin: 1rem auto 0;
-            border-radius: 3px;
-        }
-        
-        .card-glass {
-            padding: 2rem;
-            height: 100%;
-            transition: all 0.3s ease;
-            background: var(--card-bg);
-            color: #fff;
-        }
-        
-        .light-mode .card-glass {
-            background: rgba(255, 255, 255, 0.9);
-            color: var(--text-color);
-        }
-        
-        .card-glass:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-        
-        .card-icon {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary-color);
-        }
-        
-        .card-title {
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #fff;
-        }
-        
-        .light-mode .card-title {
-            color: var(--text-color);
-        }
-        
-        /* Formation Section */
-        #formations .timeline {
-            position: relative;
-            padding-left: 2rem;
-        }
-        
-        #formations .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 3px;
-            height: 100%;
-            background: var(--primary-color);
-            border-radius: 3px;
-        }
-        
-        .timeline-item {
-            margin-bottom: 2.5rem;
-            position: relative;
-        }
-        
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -2rem;
-            top: 0;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            box-shadow: 0 0 0 5px rgba(0, 98, 255, 0.2);
-        }
-        
-        .timeline-date {
-            font-size: 0.9rem;
-            color: #aaa;
-            margin-bottom: 0.5rem;
-        }
-        
-        .light-mode .timeline-date {
-            color: #888;
-        }
-        
-        .timeline-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #fff;
-        }
-        
-        .light-mode .timeline-title {
-            color: var(--text-color);
-        }
-        
-        .timeline-place {
-            font-style: italic;
-            color: #aaa;
-            margin-bottom: 0.5rem;
-        }
-        
-        .light-mode .timeline-place {
-            color: #666;
-        }
-        
-        /* Certifications Section */
-        .cert-badge {
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .cert-badge:hover {
-            transform: scale(1.05);
-        }
-        
-        .cert-badge img {
-            max-width: 100px;
-            height: auto;
-            margin-bottom: 1.5rem;
-        }
-        
-        /* Projets Section */
-        .project-card {
-            margin-bottom: 2rem;
-            overflow: hidden;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            background: var(--card-bg);
-        }
-        
-        .light-mode .project-card {
-            background: white;
-        }
-        
-        .project-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-        }
-        
-        .project-img {
-            height: 200px;
-            background-color: #333;
-            background-size: cover;
-            background-position: center;
-        }
-        
-        .light-mode .project-img {
-            background-color: #ddd;
-        }
-        
-        .project-content {
-            padding: 1.5rem;
-            background: var(--card-bg);
-            color: #fff;
-        }
-        
-        .light-mode .project-content {
-            background: white;
-            color: var(--text-color);
-        }
-        
-        .project-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-        
-        .project-tags {
-            display: flex;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-        
-        .project-tag {
-            padding: 0.4rem 0.8rem;
-            background: rgba(0, 98, 255, 0.1);
-            color: var(--primary-color);
-            border-radius: 50px;
-            font-size: 0.8rem;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        /* Passions Section */
-        .passion-item {
-            text-align: center;
-            padding: 2rem;
-            transition: all 0.3s ease;
-        }
-        
-        .passion-item:hover {
-            transform: translateY(-10px);
-        }
-        
-        .passion-icon {
-            font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 1.5rem;
-        }
-        
-        /* Contact Section */
-        #contact {
-            background: linear-gradient(135deg, #1a1a1a, #121212);
-        }
-        
-        .light-mode #contact {
-            background: linear-gradient(135deg, #f8faff, #e4e8f0);
-        }
-        
-        .contact-info {
-            margin-bottom: 2rem;
-        }
-        
-        .contact-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .contact-icon {
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 50%;
-            margin-right: 1rem;
-            font-size: 1.2rem;
-            flex-shrink: 0;
-        }
-        
-        .contact-text {
-            font-size: 1.1rem;
-        }
-        
-        .form-control {
-            padding: 1rem;
-            border: 1px solid #444;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            margin-bottom: 1.5rem;
-            color: #fff;
-        }
-        
-        .light-mode .form-control {
-            border: 1px solid #ddd;
-            background: rgba(255, 255, 255, 0.9);
-            color: var(--text-color);
-        }
-        
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(0, 98, 255, 0.25);
-        }
-        
-        .form-glass {
-            padding: 2rem;
-        }
-        
-        /* Footer */
-        footer {
-            background: var(--primary-color);
-            color: white;
-            padding: 2rem 0;
-            text-align: center;
-        }
-        
-        .social-links {
-            margin-bottom: 1.5rem;
-        }
-        
-        .social-link {
-            width: 40px;
-            height: 40px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border-radius: 50%;
-            margin: 0 0.5rem;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-        }
-        
-        .social-link:hover {
-            background: white;
-            color: var(--primary-color);
-            transform: translateY(-3px);
-        }
-        
-        .back-to-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--primary-color);
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 999;
-            box-shadow: 0 4px 15px rgba(0, 98, 255, 0.3);
-        }
-        
-        .back-to-top.visible {
-            opacity: 1;
-        }
-        
-        .back-to-top:hover {
-            background: #0052d6;
-            transform: translateY(-5px);
-            box-shadow: 0 6px 20px rgba(0, 98, 255, 0.4);
-        }
-        
-        /* Responsive */
-        @media (max-width: 991.98px) {
-            .hero-title {
-                font-size: 2.5rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.3rem;
-            }
-            
-            .section-title {
-                font-size: 2.2rem;
-            }
-        }
-        
-        @media (max-width: 767.98px) {
-            .hero-title {
-                font-size: 2rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.1rem;
-            }
-            
-            .section-title {
-                font-size: 1.8rem;
-            }
-            
-            .cube-wrapper {
-                width: 150px;
-                height: 150px;
-                margin-top: 2rem;
-            }
-        }
-        
-        /* Animations */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s ease;
-        }
-        
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* Loading Spinner */
-        .spinner-border {
-            display: none;
-        }
-        
-        /* Alert Messages */
-        .alert {
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Emmanuel TAHE · Développeur Full-Stack, orienté Digital Delivery</title>
+  <meta name="description" content="Développeur full-stack basé à Lomé (Laravel, React, Flutter, n8n). Je transforme des besoins métier en solutions livrées et je m'oriente vers le Digital Delivery : Business Analysis, Scrum et paiements digitaux.">
+  <meta name="author" content="Emmanuel TAHE">
+  <link rel="canonical" href="https://emmanueltahe.netlify.app/">
+  <meta name="theme-color" content="#FBF6F0" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#071c1a" media="(prefers-color-scheme: dark)">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:url" content="https://emmanueltahe.netlify.app/">
+  <meta property="og:title" content="Emmanuel TAHE · Développeur Full-Stack">
+  <meta property="og:description" content="Je transforme des besoins métier en solutions livrées. En route vers le Digital Delivery : Business Analysis, Scrum et paiements digitaux.">
+  <meta property="og:image" content="https://emmanueltahe.netlify.app/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://emmanueltahe.netlify.app/og-image.png">
+
+  <script>document.documentElement.classList.add("js");</script>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
+  <style>
+    :root {
+      --cream: #F5DABF;
+      --green: #0F3D3A;
+      --bordeaux: #6C151E;
+      --bg: #FBF6F0;
+      --surface: #ffffff;
+      --glass: rgba(255, 255, 255, 0.55);
+      --glass-border: rgba(255, 255, 255, 0.7);
+      --text: #13201f;
+      --text-2: #4b5754;
+      --text-3: #84807a;
+      --line: rgba(15, 61, 58, 0.1);
+      --accent: #0F3D3A;
+      --accent-2: #6C151E;
+      --accent-soft: rgba(15, 61, 58, 0.08);
+      --wine-soft: rgba(108, 21, 30, 0.08);
+      --shadow: 0 1px 2px rgba(15, 61, 58, 0.05), 0 12px 32px rgba(15, 61, 58, 0.08);
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+      --radius: 14px;
+      --wrap: 1080px;
+      --font: "Inter", "InterVariable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    @supports (font-variation-settings: normal) {
+      :root { --font: "InterVariable", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #071c1a;
+        --surface: #0d2724;
+        --glass: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(245, 218, 191, 0.12);
+        --text: #f6ece1;
+        --text-2: #c7b9aa;
+        --text-3: #8d8278;
+        --line: rgba(245, 218, 191, 0.1);
+        --accent: #F5DABF;
+        --accent-2: #e8a1a8;
+        --accent-soft: rgba(245, 218, 191, 0.1);
+        --wine-soft: rgba(232, 161, 168, 0.12);
+        --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 80px; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      font-feature-settings: "cv11", "ss01";
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+    a { color: inherit; }
+    img { max-width: 100%; display: block; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+    .wrap { width: min(var(--wrap), 100% - 48px); margin-inline: auto; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+    /* Fond vivant : halos crème / vert / bordeaux, en parallaxe */
+    .aurora { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.75; will-change: transform; }
+    .orb-cream { width: 46vmax; height: 46vmax; left: -12vmax; top: -14vmax; background: radial-gradient(circle at 40% 40%, var(--cream), transparent 70%); }
+    .orb-green { width: 40vmax; height: 40vmax; right: -14vmax; top: 8vh; background: radial-gradient(circle at 50% 50%, var(--green), transparent 68%); opacity: 0.4; }
+    .orb-wine { width: 30vmax; height: 30vmax; left: 30vw; top: 62vh; background: radial-gradient(circle at 50% 50%, var(--bordeaux), transparent 68%); opacity: 0.3; }
+    @media (prefers-color-scheme: dark) {
+      .orb-cream { opacity: 0.16; }
+      .orb-green { opacity: 0.55; background: radial-gradient(circle, #1d6b65, transparent 68%); }
+      .orb-wine { opacity: 0.35; }
+    }
+    .grain { position: absolute; inset: 0; opacity: 0.05; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+    @media (prefers-reduced-motion: no-preference) {
+      .orb-inner { width: 100%; height: 100%; border-radius: 50%; animation: drift 22s ease-in-out infinite alternate; }
+      .orb-green .orb-inner { animation-duration: 26s; animation-direction: alternate-reverse; }
+      .orb-wine .orb-inner { animation-duration: 30s; }
+      @keyframes drift { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(4vmax, 3vmax, 0) scale(1.08); } }
+    }
+    .orb-inner { background: inherit; }
+    .orb { background: none !important; }
+    .orb-cream .orb-inner { background: radial-gradient(circle at 40% 40%, var(--cream), transparent 70%); }
+    .orb-green .orb-inner { background: radial-gradient(circle, var(--green), transparent 68%); }
+    .orb-wine .orb-inner { background: radial-gradient(circle, var(--bordeaux), transparent 68%); }
+    @media (prefers-color-scheme: dark) { .orb-green .orb-inner { background: radial-gradient(circle, #1d6b65, transparent 68%); } }
+
+    /* Verre dépoli */
+    .glass {
+      background: var(--glass);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow);
+    }
+
+    /* Header */
+    .site-header {
+      position: sticky; top: 0; z-index: 10;
+      background: color-mix(in srgb, var(--bg) 82%, transparent);
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid var(--line);
+      padding-top: env(safe-area-inset-top);
+    }
+    .site-header .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
+    .brand { font-weight: 600; letter-spacing: -0.01em; text-decoration: none; white-space: nowrap; }
+    .nav { display: flex; gap: 4px; }
+    .nav a {
+      text-decoration: none; color: var(--text-2); font-size: 15px;
+      padding: 6px 10px; border-radius: 8px;
+      transition: color 150ms ease, background-color 150ms ease;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .nav a:hover { color: var(--text); background: var(--accent-soft); }
+    }
+    @media (max-width: 720px) { .nav { display: none; } }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      height: 44px; padding: 0 18px; border-radius: 10px;
+      font: inherit; font-size: 15px; font-weight: 500; text-decoration: none;
+      border: 1px solid transparent; cursor: pointer;
+      touch-action: manipulation; user-select: none;
+      transition: transform 160ms var(--ease-out), background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--green); color: #FBF6F0; }
+    @media (prefers-color-scheme: dark) { .btn-primary { background: var(--cream); color: var(--green); } }
+    .btn-ghost { background: var(--glass); color: var(--text); border-color: var(--glass-border); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+    @media (hover: hover) and (pointer: fine) {
+      .btn-primary:hover { background: color-mix(in srgb, var(--green) 85%, var(--bordeaux)); }
+      .btn-ghost:hover { border-color: color-mix(in srgb, var(--text) 25%, transparent); }
+    }
+    .btn[disabled] { opacity: 0.6; cursor: progress; }
+
+    /* Hero */
+    .hero { min-height: calc(100svh - 64px); display: flex; align-items: center; padding: 72px 0 96px; }
+    .kicker { display: inline-flex; align-items: center; gap: 8px; color: var(--text-2); font-size: 15px; margin: 0 0 20px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--bordeaux); flex-shrink: 0; box-shadow: 0 0 0 4px var(--wine-soft); }
+    @media (prefers-color-scheme: dark) { .dot { background: #e8a1a8; } }
+    .hero h1 {
+      font-size: clamp(44px, 8vw, 88px); line-height: 1.02; letter-spacing: -0.035em;
+      font-weight: 650; margin: 0 0 24px;
+    }
+    .hero .lead {
+      font-size: clamp(20px, 2.6vw, 26px); line-height: 1.4; letter-spacing: -0.015em;
+      color: var(--text); max-width: 32ch; margin: 0 0 16px; font-weight: 500;
+    }
+    .gradient-word {
+      background: linear-gradient(100deg, var(--green) 0%, var(--bordeaux) 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    @media (prefers-color-scheme: dark) {
+      .gradient-word { background: linear-gradient(100deg, var(--cream) 0%, #e8a1a8 100%); -webkit-background-clip: text; background-clip: text; }
+    }
+    .hero-card {
+      position: relative; padding: 18px 20px; border-radius: 18px; max-width: 360px;
+      display: grid; gap: 4px; will-change: transform;
+    }
+    .hero-card .label { font-size: 13px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; }
+    .hero-card strong { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+    .hero-card span.desc { color: var(--text-2); font-size: 15px; }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+    .hero-cards { display: grid; gap: 16px; justify-items: end; }
+    .hero-cards .hero-card:nth-child(2) { margin-right: 48px; }
+    @media (max-width: 920px) { .hero-grid { grid-template-columns: minmax(0, 1fr); } .hero-cards { justify-items: start; } .hero-cards .hero-card:nth-child(2) { margin-right: 0; margin-left: 32px; } }
+    @media (max-width: 520px) { .hero-cards .hero-card:nth-child(2) { margin-left: 16px; } }
+    .hero .sub { color: var(--text-2); max-width: 60ch; margin: 0 0 36px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .socials { display: flex; gap: 18px; margin-top: 28px; font-size: 15px; }
+    .socials a { color: var(--text-2); text-decoration: none; transition: color 150ms ease; }
+    @media (hover: hover) and (pointer: fine) { .socials a:hover { color: var(--text); } }
+
+    /* Hero entrance: seen once per visit, lead first, support then decoration */
+    @media (prefers-reduced-motion: no-preference) {
+      .enter { opacity: 0; transform: translateY(14px); animation: enter 600ms var(--ease-out) forwards; }
+      .enter-1 { animation-delay: 60ms; }
+      .enter-2 { animation-delay: 180ms; }
+      .enter-3 { animation-delay: 280ms; }
+      .enter-4 { animation-delay: 360ms; }
+      .enter-fade { opacity: 0; animation: fade 600ms ease forwards; animation-delay: 420ms; }
+      @keyframes enter { to { opacity: 1; transform: translateY(0); } }
+      @keyframes fade { to { opacity: 1; } }
+    }
+
+    /* Sections */
+    section { padding: 96px 0; border-top: 1px solid var(--line); position: relative; }
+    .section-head { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 32px; }
+    @media (max-width: 820px) { .section-head { grid-template-columns: minmax(0, 1fr); gap: 16px; } section { padding: 72px 0; } }
+    .eyebrow { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); margin: 0 0 8px; font-weight: 500; }
+    h2 { font-size: clamp(28px, 3.6vw, 36px); letter-spacing: -0.025em; line-height: 1.15; margin: 0; font-weight: 600; }
+    h3 { font-size: 19px; letter-spacing: -0.015em; line-height: 1.3; margin: 0; font-weight: 600; }
+    .prose p { margin: 0 0 16px; max-width: 65ch; color: var(--text-2); }
+    .prose p strong { color: var(--text); font-weight: 600; }
+
+    .now {
+      margin-top: 32px; padding: 24px; border-radius: var(--radius);
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px;
+    }
+    @media (max-width: 640px) { .now { grid-template-columns: minmax(0, 1fr); } }
+    .now h3 { font-size: 15px; color: var(--text-3); font-weight: 500; letter-spacing: 0; margin-bottom: 6px; }
+    .now p { margin: 0; color: var(--text); }
+
+    /* Timeline */
+    .timeline { list-style: none; margin: 0; padding: 0; }
+    .tl-item { display: grid; grid-template-columns: minmax(0, 170px) minmax(0, 1fr); gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+    .tl-item:first-child { padding-top: 0; }
+    .tl-item:last-child { border-bottom: 0; }
+    @media (max-width: 640px) { .tl-item { grid-template-columns: minmax(0, 1fr); gap: 6px; } }
+    .tl-date { color: var(--text-3); font-size: 15px; font-variant-numeric: tabular-nums; }
+    .tl-org { color: var(--text-2); margin: 2px 0 10px; font-size: 15px; }
+    .tl-body p, .tl-body li { color: var(--text-2); max-width: 65ch; }
+    .tl-body p { margin: 0 0 8px; }
+    .tl-body ul { margin: 0; padding-left: 18px; }
+    .tl-body li { margin-bottom: 4px; }
+
+    /* Projects */
+    .projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    @media (max-width: 820px) { .projects { grid-template-columns: minmax(0, 1fr); } }
+    .project {
+      display: flex; flex-direction: column; gap: 12px;
+      padding: 24px; border-radius: var(--radius);
+      min-width: 0;
+      transition: transform 200ms var(--ease-out), box-shadow 200ms ease;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .project:hover { transform: translateY(-3px); box-shadow: 0 2px 4px rgba(15, 61, 58, 0.06), 0 20px 44px rgba(15, 61, 58, 0.12); }
+    }
+    .project.featured { background: linear-gradient(135deg, color-mix(in srgb, var(--cream) 55%, transparent), color-mix(in srgb, var(--glass) 100%, transparent) 55%, var(--wine-soft)); }
+    @media (prefers-color-scheme: dark) { .project.featured { background: linear-gradient(135deg, rgba(245, 218, 191, 0.1), rgba(255, 255, 255, 0.04) 55%, rgba(108, 21, 30, 0.25)); } }
+    .project.featured { grid-column: 1 / -1; }
+    .project-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .project-top h3 { min-width: 0; overflow-wrap: anywhere; }
+    .badge {
+      flex-shrink: 0; white-space: nowrap;
+      font-size: 12.5px; font-weight: 500; padding: 3px 10px; border-radius: 999px;
+      background: var(--accent-soft); color: var(--accent);
+    }
+    .badge.neutral { background: var(--wine-soft); color: var(--accent-2); }
+    .project p { margin: 0; color: var(--text-2); }
+    .project .context { font-size: 14.5px; color: var(--text-3); }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 4px; }
+    .tag { font-size: 13px; color: var(--text-2); border: 1px solid var(--line); padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+    .project a.link { font-size: 15px; font-weight: 500; color: var(--accent); text-decoration: none; }
+    @media (hover: hover) and (pointer: fine) { .project a.link:hover { text-decoration: underline; text-underline-offset: 3px; } }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .js .reveal { opacity: 0; transform: translateY(18px); transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
+      .js .reveal.in { opacity: 1; transform: none; }
+    }
+
+    /* Skills */
+    .skills { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 40px; }
+    @media (max-width: 640px) { .skills { grid-template-columns: minmax(0, 1fr); } }
+    .skills h3 { font-size: 15px; color: var(--text-3); font-weight: 500; letter-spacing: 0; margin-bottom: 10px; }
+    .skills .tags { margin: 0; padding: 0; }
+    .skills .tag { font-size: 14.5px; padding: 4px 11px; color: var(--text); }
+    .learning .tag { border-style: dashed; color: var(--text-2); }
+
+    .two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
+    @media (max-width: 820px) { .two-col { grid-template-columns: minmax(0, 1fr); } }
+    .list { list-style: none; margin: 0; padding: 0; }
+    .list li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .list li:last-child { border-bottom: 0; }
+    .list .meta { color: var(--text-3); font-size: 15px; font-variant-numeric: tabular-nums; }
+    .list .muted { color: var(--text-2); }
+    .passions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    /* Contact */
+    .contact-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 48px; }
+    @media (max-width: 820px) { .contact-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; } }
+    .contact-lines { list-style: none; padding: 0; margin: 24px 0 0; }
+    .contact-lines li { padding: 10px 0; border-bottom: 1px solid var(--line); display: flex; gap: 16px; }
+    .contact-lines li:last-child { border-bottom: 0; }
+    .contact-lines .k { color: var(--text-3); width: 88px; flex-shrink: 0; font-size: 15px; }
+    .contact-lines a { overflow-wrap: anywhere; text-decoration: none; }
+    @media (hover: hover) and (pointer: fine) { .contact-lines a:hover { text-decoration: underline; text-underline-offset: 3px; } }
+
+    form { display: grid; gap: 14px; padding: 24px; border-radius: var(--radius); }
+    .field { display: grid; gap: 6px; }
+    .field-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    @media (max-width: 520px) { .field-row { grid-template-columns: minmax(0, 1fr); } }
+    label { font-size: 14px; font-weight: 500; color: var(--text-2); }
+    input, textarea {
+      font: inherit; font-size: 16px; color: var(--text);
+      background: color-mix(in srgb, var(--bg) 70%, transparent); border: 1px solid var(--line); border-radius: 10px;
+      padding: 11px 13px; width: 100%;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+    textarea { min-height: 140px; resize: vertical; }
+    input:focus-visible, textarea:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+    .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+    .form-status { font-size: 15px; margin: 0; min-height: 1.6em; color: var(--text-2); }
+    .form-status.ok { color: #15803d; }
+    .form-status.err { color: #b91c1c; }
+    @media (prefers-color-scheme: dark) { .form-status.ok { color: #4ade80; } .form-status.err { color: #f87171; } }
+
+    footer { border-top: 1px solid var(--line); padding: 32px 0 calc(32px + env(safe-area-inset-bottom)); color: var(--text-3); font-size: 14px; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    footer a { color: var(--text-2); text-decoration: none; }
+  </style>
 </head>
 <body>
-    <!-- Canvas pour les particules (sera ajouté par JavaScript) -->
-    
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand" href="#home">Emmanuel TAHE</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#home">Accueil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#formations">Formations</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#certifications">Certifications</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#projets">Réalisations</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#passions">Passions</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <button class="theme-toggle nav-link" id="themeToggle">
-                            <i class="fas fa-moon"></i>
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+  <div class="aurora" aria-hidden="true">
+    <div class="orb orb-cream" data-speed="-0.12" data-mouse="18"><div class="orb-inner"></div></div>
+    <div class="orb orb-green" data-speed="0.18" data-mouse="-26"><div class="orb-inner"></div></div>
+    <div class="orb orb-wine" data-speed="-0.28" data-mouse="34"><div class="orb-inner"></div></div>
+    <div class="grain"></div>
+  </div>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="#top">Emmanuel TAHE</a>
+      <nav class="nav" aria-label="Navigation principale">
+        <a href="#apropos">À propos</a>
+        <a href="#parcours">Parcours</a>
+        <a href="#projets">Projets</a>
+        <a href="#competences">Compétences</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-    <!-- Hero Section avec effet Parallaxe -->
-    <section id="home">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-7 hero-content fade-in">
-                    <h1 class="hero-title">Hey, I'm Emmanuel <span class="hand-wave">👋</span></h1>
-                    <p class="hero-subtitle">Je suis <span class="highlight">Développeur Full Stack JavaScript</span> passionné par le code et l'apprentissage de nouvelles technologies!</p>
-                    <a href="#projets" class="btn btn-primary">Découvrir mes projets</a>
-                </div>
-                <div class="col-lg-5 fade-in">
-                    <div class="cube-wrapper"></div> <!-- Cube Three.js sera injecté ici -->
-                </div>
-            </div>
+  <main id="top">
+    <div class="hero">
+      <div class="wrap hero-grid">
+        <div>
+        <p class="kicker enter enter-1"><span class="dot" aria-hidden="true"></span>Développeur Full-Stack · Lomé, Togo</p>
+        <h1 class="enter enter-1">Emmanuel TAHE</h1>
+        <p class="lead enter enter-2">Je transforme des besoins métier en <span class="gradient-word">solutions livrées</span>.</p>
+        <p class="sub enter enter-3">Développeur full-stack (Laravel, React, Flutter, n8n) chez Eclipse Technologique, je m'oriente vers le Digital Delivery : comprendre les besoins, organiser le travail et livrer avec fiabilité. En apprentissage : Business Analysis, Scrum et paiements digitaux.</p>
+        <div class="actions enter enter-4">
+          <a class="btn btn-primary" href="#projets">Voir mes projets</a>
+          <a class="btn btn-ghost" href="#contact">Me contacter</a>
         </div>
-        <div class="wave-bg"></div>
-    </section>
-
-    <!-- Formations Section -->
-    <section id="formations">
-        <div class="container">
-            <h2 class="section-title fade-in">Mes Formations</h2>
-            <div class="row">
-                <div class="col-lg-8 mx-auto">
-                    <div class="glass card-glass fade-in">
-                        <div class="timeline">
-                            <div class="timeline-item">
-                                <div class="timeline-date">2024 - 2025</div>
-                                <h4 class="timeline-title">Bachelor 2 | Système d'Information</h4>
-                                <div class="timeline-place">Lomé Business School</div>
-                                <p>Formation en développement full stack, avec spécialisation en JavaScript et technologies web modernes.</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-date">2023 - 2024</div>
-                                <h4 class="timeline-title">Bachelor 1 | Système d'Information</h4>
-                                <div class="timeline-place">Lomé Business School</div>
-                                <p>Formation axée sur le développement d'applications et la gestion de projets informatiques.</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-date">2022 - 2023</div>
-                                <h4 class="timeline-title">Baccalauréat Série C4</h4>
-                                <div class="timeline-place">Le SAVOIR, Lomé</div>
-                                <p>Développement de mon amour pour les sciences [Maths, Physiques]</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="socials enter-fade">
+          <a href="https://www.linkedin.com/in/emmanuel-tahe/" target="_blank" rel="noopener">LinkedIn ↗</a>
+          <a href="https://github.com/Emmanuel-Prince-T" target="_blank" rel="noopener">GitHub ↗</a>
         </div>
-    </section>
-
-    <!-- Certifications Section -->
-    <section id="certifications">
-        <div class="container">
-            <h2 class="section-title fade-in">Mes Certifications</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="glass card-glass cert-badge fade-in">
-                        <i class="fab fa-react fa-4x mb-4" style="color: #61DAFB;"></i>
-                        <h4>React Certified Developer</h4>
-                        <p>OpenClassroom • 2024</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="glass card-glass cert-badge fade-in">
-                        <i class="fab fa-node-js fa-4x mb-4" style="color: #68A063;"></i>
-                        <h4>Node.js Professional</h4>
-                        <p>OpenClassroom • 2025</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="glass card-glass cert-badge fade-in">
-                        <i class="fab fa-aws fa-4x mb-4" style="color: #FF9900;"></i>
-                        <h4>AWS Certified Developer</h4>
-                        <p>Amazon • En cours</p>
-                    </div>
-                </div>
-            </div>
         </div>
-    </section>
-
-    <!-- Projets Section -->
-    <section id="projets">
-        <div class="container">
-            <h2 class="section-title fade-in">Mes Réalisations</h2>
-            <div class="row">
-                <div class="col-lg-4 col-md-6">
-                    <div class="project-card fade-in">
-                        <div class="project-img" style="background-color: #6C63FF;"></div>
-                        <div class="project-content">
-                            <h4 class="project-title">E-commerce Platform</h4>
-                            <p>Plateforme e-commerce complète avec un système de localisation des livreurs</p>
-                            <div class="project-tags">
-                                <span class="project-tag">React</span>
-                                <span class="project-tag">TailwindCSS</span>
-                                <span class="project-tag">SIG</span>
-                                <span class="project-tag">AGI</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="project-card fade-in">
-                        <div class="project-img" style="background-color: #43A047;"></div>
-                        <div class="project-content">
-                            <h4 class="project-title">T-power App</h4>
-                            <p>Application de gestion d'un système [composé du panneau solaire, de la batterie, du courant électrique et des capteurs] avec fonctionnalités collaboratives et notifications en temps réel.</p>
-                            <div class="project-tags">
-                                <span class="project-tag">HTML</span>
-                                <span class="project-tag">Bootstrap</span>
-                                <span class="project-tag">PHP</span>
-                                <span class="project-tag">Firebase</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="project-card fade-in">
-                        <div class="project-img" style="background-color: #FF6584;"></div>
-                        <div class="project-content">
-                            <h4 class="project-title">Christmax</h4>
-                            <p>Une application web pour souhaiter un joyeux noël à tout le monde.</p>
-                            <div class="project-tags">
-                                <span class="project-tag">HTML</span>
-                                <span class="project-tag">Bootstrap</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="hero-cards enter-fade" aria-label="En bref">
+          <div class="hero-card glass" data-speed="-0.06" data-mouse="10">
+            <span class="label">Aujourd'hui</span>
+            <strong>Développeur Full-Stack</strong>
+            <span class="desc">Eclipse Technologique · depuis août 2025</span>
+          </div>
+          <div class="hero-card glass" data-speed="-0.12" data-mouse="-14">
+            <span class="label">En construction</span>
+            <strong>EtudCollab</strong>
+            <span class="desc">Travail de groupe et évaluation équitable</span>
+          </div>
+          <div class="hero-card glass" data-speed="-0.04" data-mouse="8">
+            <span class="label">Cap</span>
+            <strong>Digital Delivery</strong>
+            <span class="desc">Business Analysis · Scrum · Paiements digitaux</span>
+          </div>
         </div>
-    </section>
-
-    <!-- Passions Section -->
-    <section id="passions">
-        <div class="container">
-            <h2 class="section-title fade-in">Mes Passions</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="glass card-glass passion-item fade-in">
-                        <i class="fas fa-laptop-code passion-icon"></i>
-                        <h4>Open Source</h4>
-                        <p>Contributeur actif à plusieurs projets open source et passionné par le partage de connaissances.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="glass card-glass passion-item fade-in">
-                        <i class="fas fa-mountain passion-icon"></i>
-                        <h4>Randonnée</h4>
-                        <p>Amateur de randonnées en montagne et d'exploration de nouveaux paysages naturels.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="glass card-glass passion-item fade-in">
-                        <i class="fas fa-chess passion-icon"></i>
-                        <h4>Échecs</h4>
-                        <p>Joueur d'échecs enthousiaste, participant à des tournois locaux.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact">
-        <div class="container">
-            <h2 class="section-title fade-in">Contactez-moi</h2>
-            <div class="row">
-                <div class="col-lg-5">
-                    <div class="glass card-glass contact-info fade-in">
-                        <div class="contact-item">
-                            <div class="contact-icon">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            <div class="contact-text">
-                                emmanueltahe25@gmail.com
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <div class="contact-icon">
-                                <i class="fas fa-phone"></i>
-                            </div>
-                            <div class="contact-text">
-                                +228 99 35 99 70
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <div class="contact-icon">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <div class="contact-text">
-                                Lomé, Togo
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-7">
-                    <div class="glass card-glass form-glass fade-in">
-                        <form id="contact-form">
-                            <div class="alert alert-success" role="alert" id="successAlert" style="display: none;">
-                                Message envoyé avec succès! Je vous répondrai dès que possible.
-                            </div>
-                            <div class="alert alert-danger" role="alert" id="errorAlert" style="display: none;">
-                                Une erreur s'est produite. Veuillez réessayer ou me contacter directement par email.
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <input type="text" class="form-control" id="name" name="from_name" placeholder="Votre nom" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <input type="email" class="form-control" id="email" name="from_email" placeholder="Votre email" required>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <input type="text" class="form-control" id="subject" name="subject" placeholder="Sujet" required>
-                            </div>
-                            <div class="mb-3">
-                                <textarea class="form-control" id="message" name="message" rows="5" placeholder="Votre message" required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary" id="submitBtn">
-                                <span id="submitText">Envoyer</span>
-                                <div class="spinner-border spinner-border-sm ms-2" role="status" id="submitSpinner" style="display: none;">
-                                    <span class="visually-hidden">Chargement...</span>
-                                </div>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="social-links">
-                <a href="https://github.com/Emmanuel-Prince-T" class="social-link"><i class="fab fa-github"></i></a>
-                <a href="https://www.linkedin.com/in/emmanuel-tahe/" class="social-link"><i class="fab fa-linkedin-in"></i></a>
-            </div>
-            <p>&copy; 2025 Emma-Tech. Tous droits réservés.</p>
-        </div>
-    </footer>
-
-    <!-- Back to Top Button -->
-    <div class="back-to-top">
-        <i class="fas fa-arrow-up"></i>
+      </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- EmailJS Integration -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                // Initialize EmailJS avec vos identifiants
-                emailjs.init('B-QUy9aHbYsTLsrim');
-                
-                // Theme toggle
-                const themeToggle = document.getElementById('themeToggle');
-                const themeIcon = themeToggle.querySelector('i');
-                
-                // Check for saved theme preference or default to dark
-                const savedTheme = localStorage.getItem('theme') || 'dark';
-                if (savedTheme === 'light') {
-                    document.body.classList.add('light-mode');
-                    themeIcon.classList.remove('fa-moon');
-                    themeIcon.classList.add('fa-sun');
-                }
-                
-                themeToggle.addEventListener('click', function() {
-                    document.body.classList.toggle('light-mode');
-                    
-                    if (document.body.classList.contains('light-mode')) {
-                        themeIcon.classList.remove('fa-moon');
-                        themeIcon.classList.add('fa-sun');
-                        localStorage.setItem('theme', 'light');
-                    } else {
-                        themeIcon.classList.remove('fa-sun');
-                        themeIcon.classList.add('fa-moon');
-                        localStorage.setItem('theme', 'dark');
-                    }
-                });
-                
-                // Navbar scroll effect
-                const navbar = document.querySelector('.navbar');
-                window.addEventListener('scroll', function() {
-                    if (window.scrollY > 50) {
-                        navbar.classList.add('navbar-scrolled');
-                    } else {
-                        navbar.classList.remove('navbar-scrolled');
-                    }
-                });
-                
-                // Back to top button
-                const backToTop = document.querySelector('.back-to-top');
-                window.addEventListener('scroll', function() {
-                    if (window.scrollY > 300) {
-                        backToTop.classList.add('visible');
-                    } else {
-                        backToTop.classList.remove('visible');
-                    }
-                });
-                
-                backToTop.addEventListener('click', function() {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
-                });
-                
-                // Smooth scrolling for navigation links
-                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                    anchor.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        
-                        const targetId = this.getAttribute('href');
-                        if (!targetId) return;
-                        
-                        const targetElement = document.querySelector(targetId);
-                        if (!targetElement) return;
-                        
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 80,
-                            behavior: 'smooth'
-                        });
-                        
-                        // Active link handling
-                        document.querySelectorAll('.nav-link').forEach(link => {
-                            link.classList.remove('active');
-                        });
-                        this.classList.add('active');
-                    });
-                });
-                
-                // Scroll reveal animation
-                const revealElements = document.querySelectorAll('.fade-in');
-                
-                function checkReveal() {
-                    const triggerBottom = window.innerHeight * 0.8;
-                    
-                    revealElements.forEach(element => {
-                        const elementTop = element.getBoundingClientRect().top;
-                        
-                        if (elementTop < triggerBottom) {
-                            element.classList.add('visible');
-                        }
-                    });
-                }
-                
-                // Optimized scroll event with debounce
-                let isScrolling;
-                window.addEventListener('scroll', function() {
-                    window.clearTimeout(isScrolling);
-                    isScrolling = setTimeout(checkReveal, 50);
-                }, { passive: true });
-                
-                checkReveal(); // Initial check
-                
-                // Section navigation highlight
-                const sections = document.querySelectorAll('section');
-                const navLinks = document.querySelectorAll('.nav-link');
-                
-                window.addEventListener('scroll', function() {
-                    let current = '';
-                    
-                    sections.forEach(section => {
-                        const sectionTop = section.offsetTop;
-                        const sectionHeight = section.clientHeight;
-                        
-                        if (window.scrollY >= sectionTop - 100) {
-                            current = section.getAttribute('id');
-                        }
-                    });
-                    
-                    navLinks.forEach(link => {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === `#${current}`) {
-                            link.classList.add('active');
-                        }
-                    });
-                });
-                
-                // Contact form submission
-                const contactForm = document.getElementById('contact-form');
-                const submitBtn = document.getElementById('submitBtn');
-                const submitText = document.getElementById('submitText');
-                const submitSpinner = document.getElementById('submitSpinner');
-                const successAlert = document.getElementById('successAlert');
-                const errorAlert = document.getElementById('errorAlert');
-                
-                if (contactForm) {
-                    contactForm.addEventListener('submit', async function(e) {
-                        e.preventDefault();
-                        
-                        // Hide previous alerts
-                        successAlert.style.display = 'none';
-                        errorAlert.style.display = 'none';
-                        
-                        // Show loading state
-                        submitText.textContent = 'Envoi en cours...';
-                        submitSpinner.style.display = 'inline-block';
-                        submitBtn.disabled = true;
-                        
-                        try {
-                            // Send email using EmailJS avec vos identifiants
-                            await emailjs.sendForm('service_7xcsn1f', 'template_f3k5nf7', this);
-                            
-                            // Show success message
-                            successAlert.style.display = 'block';
-                            contactForm.reset();
-                            
-                        } catch (error) {
-                            console.error('Email sending error:', error);
-                            // Show error message
-                            errorAlert.style.display = 'block';
-                        } finally {
-                            // Reset button state
-                            submitText.textContent = 'Envoyer';
-                            submitSpinner.style.display = 'none';
-                            submitBtn.disabled = false;
-                        }
-                    });
-                }
-                
-                // Initialize all animations
-                initAnimations();
-                
-            } catch (error) {
-                console.error('Initialization error:', error);
-            }
+    <section id="apropos" aria-labelledby="t-apropos">
+      <div class="wrap section-head">
+        <div>
+          <p class="eyebrow">À propos</p>
+          <h2 id="t-apropos">Du code au delivery</h2>
+        </div>
+        <div class="prose">
+          <p>Je suis <strong>développeur full-stack</strong> basé à Lomé et étudiant en dernière année de licence en Systèmes d'Information (spécialisation Génie Logiciel) à Lomé Business School.</p>
+          <p>Depuis 2024, je conçois des applications pour des institutions et des entreprises : digitalisation de processus dans le secteur de la justice, archivage de documents, automatisation de veille pour une entreprise de l'énergie, interfaces web.</p>
+          <p>Ces projets m'ont appris que le code n'est qu'une partie du travail. Un projet réussit quand on a bien compris le besoin, découpé le travail et livré de façon régulière. J'ai pratiqué Scrum à l'école et sur des projets en équipe, et c'est ce qui m'oriente vers le <strong>Digital Delivery</strong> : Business Analyst, Scrum Master, Product Owner.</p>
+          <p>Le domaine qui m'attire le plus : le <strong>bancaire et les paiements digitaux</strong> (API de paiement, mobile money). J'y monte en compétence pas à pas, et je partage ce que j'apprends.</p>
+          <div class="now glass">
+            <div>
+              <h3>En ce moment</h3>
+              <p>Je construis EtudCollab, mon projet de fin d'études, et je documente chaque étape sur LinkedIn.</p>
+            </div>
+            <div>
+              <h3>J'apprends</h3>
+              <p>Business Analysis, Scrum, API de paiement et mobile money.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="parcours" aria-labelledby="t-parcours">
+      <div class="wrap section-head">
+        <div>
+          <p class="eyebrow">Parcours</p>
+          <h2 id="t-parcours">Expériences</h2>
+        </div>
+        <ol class="timeline">
+          <li class="tl-item">
+            <div class="tl-date">août 2025 – aujourd'hui</div>
+            <div class="tl-body">
+              <h3>Développeur Full-Stack</h3>
+              <p class="tl-org">Eclipse Technologique · Lomé</p>
+              <p>Développement d'applications sur mesure pour des clients institutionnels et privés, en équipe, avec une organisation Scrum sur certains projets.</p>
+              <ul>
+                <li>Système de digitalisation des audiences pour le Tribunal de Grande Instance de Lomé : extraction automatisée de données à partir de lots de documents PDF avec l'API Gemini.</li>
+                <li>Participation à des applications pour des structures publiques (gestion de ressources et de dossiers). Projets confidentiels.</li>
+              </ul>
+            </div>
+          </li>
+          <li class="tl-item">
+            <div class="tl-date">juil. – déc. 2025</div>
+            <div class="tl-body">
+              <h3>Responsable communication marketing</h3>
+              <p class="tl-org">Allio Solutions · temps partiel</p>
+              <p>Gestion de la présence de l'entreprise sur LinkedIn et TikTok : planification, rédaction et publication des contenus.</p>
+            </div>
+          </li>
+          <li class="tl-item">
+            <div class="tl-date">juin – juil. 2025</div>
+            <div class="tl-body">
+              <h3>Automatisation des systèmes</h3>
+              <p class="tl-org">KYA-Energy Group</p>
+              <p>Conception d'un outil de veille marketing et concurrentielle : pipeline d'automatisation avec n8n, rapports et alertes générés automatiquement.</p>
+            </div>
+          </li>
+          <li class="tl-item">
+            <div class="tl-date">mai – juil. 2025</div>
+            <div class="tl-body">
+              <h3>Stagiaire · Archivage et développement logiciel</h3>
+              <p class="tl-org">Tribunal de Grande Instance de Lomé</p>
+              <p>Tri, classement et organisation des documents du tribunal sur le terrain, puis développement d'un logiciel d'archivage au sein d'une équipe de 5 développeurs. J'y ai appris à comprendre un processus métier avant de le digitaliser.</p>
+            </div>
+          </li>
+          <li class="tl-item">
+            <div class="tl-date">nov. 2024 – janv. 2025</div>
+            <div class="tl-body">
+              <h3>Développeur front-end</h3>
+              <p class="tl-org">LA-A-LA · temps partiel</p>
+              <p>Conception du tableau de bord des utilisateurs de l'application (React.js, Tailwind CSS).</p>
+            </div>
+          </li>
+          <li class="tl-item">
+            <div class="tl-date">sept. – nov. 2024</div>
+            <div class="tl-body">
+              <h3>Stagiaire développeur web</h3>
+              <p class="tl-org">La Société Togolaise des Eaux (TdE)</p>
+              <p>Refonte du site web de l'entreprise sous WordPress, développement PHP sur un projet interne, et participation à un site d'e-learning avec le développeur principal.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="projets" aria-labelledby="t-projets">
+      <div class="wrap">
+        <div class="section-head" style="margin-bottom: 40px;">
+          <div>
+            <p class="eyebrow">Projets</p>
+            <h2 id="t-projets">Ce que j'ai construit</h2>
+          </div>
+          <div class="prose"><p>Une sélection de projets réels. Pour les projets clients, je décris la nature du travail sans détail confidentiel.</p></div>
+        </div>
+        <div class="projects">
+          <article class="project featured glass reveal">
+            <div class="project-top">
+              <h3>EtudCollab</h3>
+              <span class="badge">En cours · projet de fin d'études</span>
+            </div>
+            <p>Plateforme qui aide les étudiants à travailler en groupe (messagerie, tâches, réunions) et qui évalue de façon transparente la participation de chacun. L'enseignant valide les scores, l'étudiant peut les consulter et les contester.</p>
+            <p class="context">Construit en public, étape par étape, avec un planning de livraison quotidien.</p>
+            <div class="tags"><span class="tag">NestJS</span><span class="tag">Next.js</span><span class="tag">TypeScript</span><span class="tag">PostgreSQL</span><span class="tag">Prisma</span><span class="tag">Docker</span></div>
+          </article>
+          <article class="project glass reveal">
+            <div class="project-top">
+              <h3>Digitalisation des audiences</h3>
+              <span class="badge neutral">Projet client</span>
+            </div>
+            <p>Extraction automatisée de données structurées à partir de lots de documents PDF, avec l'API Gemini, pour le Tribunal de Grande Instance de Lomé.</p>
+            <p class="context">Eclipse Technologique · 2026</p>
+            <div class="tags"><span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">React</span><span class="tag">API Gemini</span></div>
+          </article>
+          <article class="project glass reveal">
+            <div class="project-top">
+              <h3>Veille concurrentielle automatisée</h3>
+              <span class="badge neutral">Projet client</span>
+            </div>
+            <p>Pipeline qui collecte et traite des informations stratégiques, puis génère des rapports et des alertes pour KYA-Energy Group.</p>
+            <p class="context">KYA-Energy Group · 2025</p>
+            <div class="tags"><span class="tag">n8n</span><span class="tag">Python</span><span class="tag">Docker</span></div>
+          </article>
+          <article class="project glass reveal">
+            <div class="project-top">
+              <h3>Logiciel d'archivage</h3>
+              <span class="badge neutral">Travail d'équipe</span>
+            </div>
+            <p>Logiciel d'archivage et de classement de documents, conçu pour s'adapter à d'autres organisations. Développé au sein d'une équipe de 5 développeurs.</p>
+            <p class="context">Tribunal de Grande Instance de Lomé · 2025</p>
+          </article>
+          <article class="project glass reveal">
+            <div class="project-top">
+              <h3>InnovShop</h3>
+              <span class="badge neutral">Prototype</span>
+            </div>
+            <p>Prototype d'interface e-commerce : catalogue par catégories, carte interactive des vendeurs et des acheteurs, et maquette d'assistant d'achat.</p>
+            <div class="tags"><span class="tag">React</span><span class="tag">TypeScript</span><span class="tag">Tailwind CSS</span><span class="tag">Mapbox</span></div>
+            <a class="link" href="https://github.com/Emmanuel-Prince-T/innovshop" target="_blank" rel="noopener">Voir le code ↗</a>
+          </article>
+          <article class="project glass reveal">
+            <div class="project-top">
+              <h3>FêteFlow</h3>
+              <span class="badge neutral">Projet personnel</span>
+            </div>
+            <p>Application qui permet à un groupe de choisir collectivement la musique pendant un événement festif : chacun propose, le groupe décide.</p>
+            <p class="context">2026</p>
+          </article>
+          <article class="project glass reveal">
+            <div class="project-top">
+              <h3>T-power</h3>
+              <span class="badge neutral">IoT</span>
+            </div>
+            <p>Application de suivi d'un système énergétique (panneau solaire, batterie, courant, capteurs) avec notifications en temps réel.</p>
+            <div class="tags"><span class="tag">Arduino</span><span class="tag">Firebase</span><span class="tag">PHP</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="competences" aria-labelledby="t-competences">
+      <div class="wrap section-head">
+        <div>
+          <p class="eyebrow">Compétences</p>
+          <h2 id="t-competences">Ce que j'utilise</h2>
+        </div>
+        <div class="skills">
+          <div>
+            <h3>Développement</h3>
+            <div class="tags"><span class="tag">Laravel</span><span class="tag">PHP</span><span class="tag">React</span><span class="tag">TypeScript</span><span class="tag">JavaScript</span><span class="tag">Flutter</span><span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">MySQL</span><span class="tag">Tailwind CSS</span><span class="tag">WordPress</span></div>
+          </div>
+          <div>
+            <h3>Automatisation et IA</h3>
+            <div class="tags"><span class="tag">n8n</span><span class="tag">API Gemini</span><span class="tag">Docker</span></div>
+          </div>
+          <div>
+            <h3>Méthode</h3>
+            <div class="tags"><span class="tag">Analyse des besoins</span><span class="tag">Scrum</span><span class="tag">Gestion de projet</span><span class="tag">MS Project</span></div>
+          </div>
+          <div class="learning">
+            <h3>En apprentissage</h3>
+            <div class="tags"><span class="tag">Business Analysis</span><span class="tag">API de paiement</span><span class="tag">Mobile money</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="formation" aria-labelledby="t-formation">
+      <div class="wrap section-head">
+        <div>
+          <p class="eyebrow">Formation et engagement</p>
+          <h2 id="t-formation">Au-delà du code</h2>
+        </div>
+        <div class="two-col">
+          <div>
+            <h3 style="margin-bottom: 8px;">Formation</h3>
+            <ul class="list">
+              <li>
+                <div>Licence (Bachelor) en Systèmes d'Information, spécialisation Génie Logiciel</div>
+                <div class="muted">Lomé Business School · soutenance en préparation</div>
+                <div class="meta">2023 – aujourd'hui</div>
+              </li>
+              <li>
+                <div>Baccalauréat série C4</div>
+                <div class="muted">Complexe Scolaire « Le Savoir », Lomé</div>
+                <div class="meta">2023</div>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="margin-bottom: 8px;">Bénévolat</h3>
+            <ul class="list">
+              <li>
+                <div>Responsable partenariats</div>
+                <div class="muted">Togo Code Run</div>
+                <div class="meta">nov. 2025 – aujourd'hui</div>
+              </li>
+              <li>
+                <div>Responsable partenariats</div>
+                <div class="muted">Tech Community Club, Lomé Business School</div>
+                <div class="meta">oct. 2024 – juin 2025</div>
+              </li>
+              <li>
+                <div>Logistique</div>
+                <div class="muted">RedTeam-TG</div>
+                <div class="meta">mars 2026</div>
+              </li>
+              <li>
+                <div>Membre média</div>
+                <div class="muted">Église Terre de Victoire, Lomé · vidéos courtes pour les réseaux sociaux</div>
+                <div class="meta">déc. 2024 – aujourd'hui</div>
+              </li>
+            </ul>
+            <h3 style="margin: 32px 0 12px;">Passions</h3>
+            <div class="passions tags"><span class="tag">Piano</span><span class="tag">Échecs</span><span class="tag">Nourriture</span><span class="tag">Réflexion</span><span class="tag">Moto</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" aria-labelledby="t-contact">
+      <div class="wrap contact-grid">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <h2 id="t-contact">Parlons de votre projet</h2>
+          <div class="prose" style="margin-top: 16px;"><p>Équipes produit, fintechs, entreprises ou universités : je réponds à tous les messages.</p></div>
+          <ul class="contact-lines">
+            <li><span class="k">Email</span><a href="mailto:emmanueltahe25@gmail.com">emmanueltahe25@gmail.com</a></li>
+            <li><span class="k">Téléphone</span><a href="tel:+22899359970">+228 99 35 99 70</a></li>
+            <li><span class="k">LinkedIn</span><a href="https://www.linkedin.com/in/emmanuel-tahe/" target="_blank" rel="noopener">linkedin.com/in/emmanuel-tahe</a></li>
+            <li><span class="k">Ville</span><span>Lomé, Togo</span></li>
+          </ul>
+        </div>
+        <form id="contact-form" class="glass" novalidate>
+          <div class="field-row">
+            <div class="field">
+              <label for="from_name">Nom</label>
+              <input id="from_name" name="from_name" type="text" autocomplete="name" required maxlength="120">
+            </div>
+            <div class="field">
+              <label for="from_email">Email</label>
+              <input id="from_email" name="from_email" type="email" autocomplete="email" required maxlength="200">
+            </div>
+          </div>
+          <div class="field">
+            <label for="subject">Sujet</label>
+            <input id="subject" name="subject" type="text" required maxlength="160">
+          </div>
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" required maxlength="5000"></textarea>
+          </div>
+          <input type="hidden" name="reply_to" id="reply_to">
+          <div class="hp" aria-hidden="true">
+            <label for="website">Ne pas remplir</label>
+            <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="actions" style="justify-content: space-between;">
+            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+            <button class="btn btn-primary" type="submit" id="send-btn">Envoyer</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© <span id="year">2026</span> Emmanuel TAHE</span>
+      <span><a href="https://www.linkedin.com/in/emmanuel-tahe/" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://github.com/Emmanuel-Prince-T" target="_blank" rel="noopener">GitHub</a></span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
+  <script>
+    // EmailJS : mêmes identifiants que l'ancien site (clé publique, prévue pour le navigateur).
+    var EMAILJS = { publicKey: 'B-QUy9aHbYsTLsrim', service: 'service_7xcsn1f', template: 'template_f3k5nf7' };
+    var FALLBACK_EMAIL = 'emmanueltahe25@gmail.com';
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Parallaxe : défilement + souris (ordinateur), désactivée si mouvements réduits.
+    (function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var reveals = document.querySelectorAll('.reveal');
+      if (reduce || !('IntersectionObserver' in window)) {
+        reveals.forEach(function (el) { el.classList.add('in'); });
+      } else {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (!en.isIntersecting) return;
+            var i = Array.prototype.indexOf.call(en.target.parentNode.children, en.target);
+            en.target.style.transitionDelay = Math.min(i, 4) * 70 + 'ms';
+            en.target.classList.add('in');
+            io.unobserve(en.target);
+          });
+        }, { rootMargin: '0px 0px -80px 0px' });
+        reveals.forEach(function (el) { io.observe(el); });
+      }
+      if (reduce) return;
+
+      var layers = Array.prototype.slice.call(document.querySelectorAll('[data-speed]'));
+      var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      var mx = 0, my = 0, cx = 0, cy = 0, ticking = false;
+
+      function render() {
+        cx += (mx - cx) * 0.08; cy += (my - cy) * 0.08;
+        var y = window.scrollY;
+        layers.forEach(function (el) {
+          var sp = parseFloat(el.getAttribute('data-speed')) || 0;
+          var m = parseFloat(el.getAttribute('data-mouse')) || 0;
+          el.style.transform = 'translate3d(' + (cx * m).toFixed(2) + 'px,' + (y * sp + cy * m).toFixed(2) + 'px,0)';
         });
-        
-        // Three.js Animation
-        function initThreeAnimation() {
-            const container = document.querySelector('.cube-wrapper');
-            if (!container) return;
+        if (Math.abs(mx - cx) > 0.001 || Math.abs(my - cy) > 0.001) requestAnimationFrame(render); else ticking = false;
+      }
+      function kick() { if (!ticking) { ticking = true; requestAnimationFrame(render); } }
+      window.addEventListener('scroll', kick, { passive: true });
+      if (fine) window.addEventListener('pointermove', function (e) {
+        mx = e.clientX / window.innerWidth - 0.5; my = e.clientY / window.innerHeight - 0.5; kick();
+      }, { passive: true });
+      kick();
+    })();
 
-            // Configuration de la scène
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            renderer.setSize(200, 200);
-            container.appendChild(renderer.domElement);
+    (function () {
+      var form = document.getElementById('contact-form');
+      var status = document.getElementById('form-status');
+      var btn = document.getElementById('send-btn');
 
-            // Création du cube
-            const geometry = new THREE.BoxGeometry(3, 3, 3);
-            const material = new THREE.MeshPhongMaterial({ 
-                color: 0x0062ff,
-                transparent: true,
-                opacity: 0.9,
-                shininess: 100
-            });
-            const cube = new THREE.Mesh(geometry, material);
-            scene.add(cube);
+      function setStatus(text, kind, html) {
+        status.className = 'form-status' + (kind ? ' ' + kind : '');
+        if (html) status.innerHTML = html; else status.textContent = text;
+      }
 
-            // Ajout de lumières
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            scene.add(ambientLight);
-            
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(1, 1, 1);
-            scene.add(directionalLight);
+      function mailtoFallback() {
+        var subject = encodeURIComponent(form.subject.value || 'Contact depuis le portfolio');
+        var body = encodeURIComponent((form.message.value || '') + '\n\n' + (form.from_name.value || '') + ' · ' + (form.from_email.value || ''));
+        return 'mailto:' + FALLBACK_EMAIL + '?subject=' + subject + '&body=' + body;
+      }
 
-            camera.position.z = 5;
-
-            // Animation
-            function animate() {
-                requestAnimationFrame(animate);
-                
-                cube.rotation.x += 0.005;
-                cube.rotation.y += 0.01;
-                
-                renderer.render(scene, camera);
-            }
-
-            // Interaction souris
-            let mouseX = 0, mouseY = 0;
-            window.addEventListener('mousemove', (e) => {
-                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-                cube.rotation.y = mouseX * 0.5;
-                cube.rotation.x = mouseY * 0.5;
-            });
-
-            function onWindowResize() {
-                camera.aspect = 1;
-                camera.updateProjectionMatrix();
-                renderer.setSize(200, 200);
-            }
-            window.addEventListener('resize', onWindowResize);
-
-            animate();
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (form.website.value) return; // robot
+        if (!form.checkValidity()) {
+          setStatus('Merci de remplir tous les champs avec un email valide.', 'err');
+          var firstInvalid = form.querySelector(':invalid');
+          if (firstInvalid) firstInvalid.focus();
+          return;
         }
-
-        // Animation de texte
-        function animateTypingText() {
-            const heroTitle = document.querySelector('.hero-title');
-            if (!heroTitle) return;
-
-            const text = heroTitle.textContent;
-            heroTitle.textContent = '';
-            
-            let i = 0;
-            const typingInterval = setInterval(() => {
-                if (i < text.length) {
-                    heroTitle.textContent += text.charAt(i);
-                    i++;
-                } else {
-                    clearInterval(typingInterval);
-                    // Ajoutez la main qui wave après que le texte soit complet
-                    document.querySelector('.hand-wave').style.display = 'inline-block';
-                }
-            }, 100);
+        if (!window.emailjs) {
+          setStatus('', 'err', 'Le service d’envoi est indisponible. <a href="' + mailtoFallback() + '">Écrivez-moi directement par email</a>.');
+          return;
         }
-
-        // Effet de particules
-        function initParticles() {
-            const canvas = document.createElement('canvas');
-            canvas.style.position = 'fixed';
-            canvas.style.top = '0';
-            canvas.style.left = '0';
-            canvas.style.width = '100%';
-            canvas.style.height = '100%';
-            canvas.style.zIndex = '-1';
-            canvas.style.opacity = '0.3';
-            document.body.appendChild(canvas);
-
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            const particles = [];
-            const particleCount = window.innerWidth * 0.1;
-
-            for (let i = 0; i < particleCount; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 2 + 1,
-                    speedX: Math.random() * 0.5 - 0.25,
-                    speedY: Math.random() * 0.5 - 0.25
-                });
-            }
-
-            function animateParticles() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                for (let i = 0; i < particles.length; i++) {
-                    const p = particles[i];
-                    
-                    ctx.fillStyle = '#0062ff';
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    p.x += p.speedX;
-                    p.y += p.speedY;
-                    
-                    if (p.x > canvas.width || p.x < 0) p.speedX *= -1;
-                    if (p.y > canvas.height || p.y < 0) p.speedY *= -1;
-                }
-                
-                requestAnimationFrame(animateParticles);
-            }
-
-            animateParticles();
-
-            window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            });
-        }
-
-        // Initialisation de toutes les animations
-        function initAnimations() {
-            console.log('Initializing animations...');
-            initThreeAnimation();
-            animateTypingText();
-            initParticles();
-        }
-    </script>
+        form.reply_to.value = form.from_email.value;
+        btn.disabled = true;
+        btn.textContent = 'Envoi…';
+        setStatus('');
+        emailjs.sendForm(EMAILJS.service, EMAILJS.template, form, { publicKey: EMAILJS.publicKey })
+          .then(function () {
+            setStatus('Merci, votre message est bien envoyé. Je vous réponds rapidement.', 'ok');
+            form.reset();
+          })
+          .catch(function (err) {
+            console.error('EmailJS', err);
+            setStatus('', 'err', 'L’envoi a échoué. <a href="' + mailtoFallback() + '">Écrivez-moi directement par email</a>.');
+          })
+          .finally(function () {
+            btn.disabled = false;
+            btn.textContent = 'Envoyer';
+          });
+      });
+    })();
+  </script>
 </body>
 </html>
